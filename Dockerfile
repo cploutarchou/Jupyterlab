@@ -1,4 +1,4 @@
-FROM buildpack-deps:buster
+FROM python:alpine
 
 LABEL maintainer="Christos Ploutarchou <cploutarchou@gmail.com>"
 
@@ -13,7 +13,10 @@ LABEL org.label-schema.schema-version="1.0.0"
 
 
 # Install required packages
-RUN apk add --update --virtual=.build-dependencies alpine-sdk nodejs ca-certificates musl-dev gcc python-dev make cmake g++ gfortran libpng-dev freetype-dev libxml2-dev libxslt-dev
+RUN apk add --update --virtual=.build-dependencies alpine-sdk nodejs ca-certificates musl-dev gcc make cmake g++ \
+    gfortran libpng-dev freetype-dev libxml2-dev libxslt-dev  gcc gfortran  py-pip build-base wget freetype-dev \
+    libpng-dev openblas-dev
+
 RUN apk add --update git
 
 # Install Jupyter
@@ -25,15 +28,16 @@ RUN jupyter nbextension enable --py widgetsnbextension
 RUN pip install jupyterlab && jupyter serverextension enable --py jupyterlab
 
 # Additional packages for compatability (glibc)
-RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub && \
-  wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk && \
-  wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-i18n-2.23-r3.apk && \
-  wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-bin-2.23-r3.apk && \
-  apk add --no-cache glibc-2.23-r3.apk glibc-bin-2.23-r3.apk glibc-i18n-2.23-r3.apk && \
-  rm "/etc/apk/keys/sgerrand.rsa.pub" && \
-  /usr/glibc-compat/bin/localedef --force --inputfile POSIX --charmap UTF-8 C.UTF-8 || true && \
-  echo "export LANG=C.UTF-8" > /etc/profile.d/locale.sh && \
-  ln -s /usr/include/locale.h /usr/include/xlocale.h
+ENV GLIBC_VERSION 2.32
+
+RUN apk-install curl ca-certificates && \
+    curl -O -L https://github.com/cploutarchou/Jupyterlab/blob/master/glibc/glibc-${GLIBC_VERSION}.apk -o glibc-${GLIBC_VERSION}.apk && \
+    apk --allow-untrusted add glibc-${GLIBC_VERSION}.apk && \
+    rm -f glibc-${GLIBC_VERSION}.apk && \
+    rm -rf /root/.cache && \
+    rm -rf /var/cache/apk/ && \
+    apk version glibc && \
+    ls /lib64/
 
 ENV LANG=C.UTF-8
 
