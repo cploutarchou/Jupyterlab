@@ -13,10 +13,9 @@ LABEL org.label-schema.schema-version="1.0.0"
 
 
 # Install required packages
+RUN apk add --update --no-cache curl jq py3-configobj py3-pip py3-setuptools python3 python3-dev libffi-dev nodejs
 RUN apk add --update --virtual=.build-dependencies alpine-sdk nodejs ca-certificates musl-dev gcc make cmake g++ \
-    gfortran libpng-dev freetype-dev libxml2-dev libxslt-dev  gcc gfortran  py-pip build-base wget freetype-dev \
-    libpng-dev openblas-dev
-
+ gfortran libpng-dev freetype-dev libxml2-dev libxslt-dev
 RUN apk add --update git
 
 # Install Jupyter
