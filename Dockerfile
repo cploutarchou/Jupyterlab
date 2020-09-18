@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:alpine
 
 LABEL maintainer="Christos Ploutarchou <cploutarchou@gmail.com>"
 
@@ -26,23 +26,10 @@ RUN jupyter nbextension enable --py widgetsnbextension
 # Install JupyterLab
 RUN pip install jupyterlab && jupyter serverextension enable --py jupyterlab
 
-# Additional packages for compatability (glibc)
-ENV GLIBC_VERSION 2.32
-
-RUN apk-install curl ca-certificates && \
-    curl -O -L https://github.com/cploutarchou/Jupyterlab/blob/master/glibc/glibc-${GLIBC_VERSION}.apk -o glibc-${GLIBC_VERSION}.apk && \
-    apk --allow-untrusted add glibc-${GLIBC_VERSION}.apk && \
-    rm -f glibc-${GLIBC_VERSION}.apk && \
-    rm -rf /root/.cache && \
-    rm -rf /var/cache/apk/ && \
-    apk version glibc && \
-    ls /lib64/
-
-ENV LANG=C.UTF-8
-
 # Install Python Packages & Requirements
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
+RUN python -m pip install --upgrade --no-deps --force-reinstall notebook
 
 RUN python -m pip install jupyterthemes
 RUN python -m pip install --upgrade jupyterthemes
