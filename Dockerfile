@@ -1,4 +1,4 @@
-FROM python:alpine
+FROM buildpack-deps:buster
 
 LABEL maintainer="Christos Ploutarchou <cploutarchou@gmail.com>"
 
