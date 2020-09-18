@@ -41,11 +41,10 @@ RUN apk-install curl ca-certificates && \
 
 ENV LANG=C.UTF-8
 
-# Install Python Packages & Requirements (Done near end to avoid invalidating cache)
+# Install Python Packages & Requirements
 COPY requirements.txt requirements.txt
-RUN python -m pip  install -r requirements.tx
-RUN python -m pip install --upgrade --no-deps --force-reinstall notebook
-#
+RUN pip install -r requirements.txt
+
 RUN python -m pip install jupyterthemes
 RUN python -m pip install --upgrade jupyterthemes
 RUN python -m pip install jupyter_contrib_nbextensions
