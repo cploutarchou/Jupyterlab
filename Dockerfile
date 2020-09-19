@@ -26,14 +26,11 @@ RUN jupyter nbextension enable --py widgetsnbextension
 # Install JupyterLab
 RUN pip install jupyterlab && jupyter serverextension enable --py jupyterlab
 
+ENV LANG=C.UTF-8
+
 # Install Python Packages & Requirements
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-RUN python -m pip install --upgrade --no-deps --force-reinstall notebook
-
-RUN python -m pip install jupyterthemes
-RUN python -m pip install --upgrade jupyterthemes
-RUN python -m pip install jupyter_contrib_nbextensions
 
 # Expose Jupyter port & cmd
 EXPOSE 8888
