@@ -1,4 +1,4 @@
-FROM python:alpine
+FROM python:3.6.15-alpine3.14
 
 LABEL maintainer="Christos Ploutarchou <cploutarchou@gmail.com>"
 
